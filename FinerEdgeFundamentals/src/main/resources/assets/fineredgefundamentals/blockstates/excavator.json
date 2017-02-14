@@ -1,0 +1,9 @@
+{
+	"variants": {
+		"normal": { "model": "fineredgefundamentals:excavator"},
+        "facing=north": { "model": "fineredgefundamentals:excavator" },
+        "facing=south": { "model": "fineredgefundamentals:excavator", "y": 180 },
+        "facing=west":  { "model": "fineredgefundamentals:excavator", "y": 270 },
+        "facing=east":  { "model": "fineredgefundamentals:excavator", "y": 90 }
+    }
+}

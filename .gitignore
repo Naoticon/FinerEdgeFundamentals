@@ -1,29 +1,47 @@
 # eclipse
-FinerEdgeFundamentals\bin
-FinerEdgeFundamentals\*.launch
-FinerEdgeFundamentals\.settings
-FinerEdgeFundamentals\.metadata
-FinerEdgeFundamentals\.classpath
-FinerEdgeFundamentals\.project
+
+FinerEdgeFundamentals/bin
+
+FinerEdgeFundamentals/*.launch
+
+FinerEdgeFundamentals/.settings
+
+FinerEdgeFundamentals/.metadata
+
+FinerEdgeFundamentals/.classpath
+
+FinerEdgeFundamentals/.project
+
+
 
 # idea
-FinerEdgeFundamentals\out
-FinerEdgeFundamentals\*.ipr
-FinerEdgeFundamentals\*.iws
-FinerEdgeFundamentals\*.iml
-FinerEdgeFundamentals\.idea
+
+FinerEdgeFundamentals/out
+
+FinerEdgeFundamentals/*.ipr
+
+FinerEdgeFundamentals/*.iws
+
+FinerEdgeFundamentals/*.iml
+
+FinerEdgeFundamentals/.idea
+
+
 
 # gradle
-FinerEdgeFundamentals\build
-FinerEdgeFundamentals\.gradle
+
+FinerEdgeFundamentals/build
+
+FinerEdgeFundamentals/.gradle
+
+
 
 # other
-FinerEdgeFundamentals\eclipse
-FinerEdgeFundamentals\run
-FinerEdgeFundamentals\crash-reports
-FinerEdgeFundamentals\resource-packs
-FinerEdgeFundamentals\saves
-FinerEdgeFundamentals\*.json
-FinerEdgeFundamentals\config
-FinerEdgeFundamentals\logs
-FinerEdgeFundamentals\options.txt
+
+FinerEdgeFundamentals/eclipse
+
+FinerEdgeFundamentals/run
+
+FinerEdgeFundamentals/saves
+FinerEdgeFundamentals/config
+FinerEdgeFundamentals/logs
