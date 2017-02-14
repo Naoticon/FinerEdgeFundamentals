@@ -11,6 +11,7 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
 @Mod(modid = ModProperties.MODID, version = ModProperties.VERSION)
+
 public class FinerEdgeFundamentalsMod {
 
     @EventHandler
