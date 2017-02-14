@@ -1,0 +1,11 @@
+{
+    "parent": "fineredgefundamentals:block/directional",
+    "textures": {
+        "top": "fineredgefundamentals:blocks/excavator_side",
+		"front": "fineredgefundamentals:blocks/excavator_front_on",
+        "back": "fineredgefundamentals:blocks/excavator_back",
+        "bottom": "fineredgefundamentals:blocks/excavator_side",
+        "left": "fineredgefundamentals:blocks/excavator_side",
+        "right": "fineredgefundamentals:blocks/excavator_side"
+    }
+}
