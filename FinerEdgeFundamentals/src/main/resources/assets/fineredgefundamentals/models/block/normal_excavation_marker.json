@@ -1,0 +1,6 @@
+{
+    "parent": "fineredgefundamentals:block/excavation_marker",
+    "textures": {
+        "excavation_marker": "fineredgefundamentals:blocks/excavation_marker"
+    }
+}

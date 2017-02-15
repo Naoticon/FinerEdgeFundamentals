@@ -1,0 +1,9 @@
+{
+    "variants": {
+        "facing=up": { "model": "fineredgefundamentals:normal_excavation_marker" },
+        "facing=east": { "model": "fineredgefundamentals:normal_excavation_marker_wall" },
+        "facing=south": { "model": "fineredgefundamentals:normal_excavation_marker_wall", "y": 90 },
+        "facing=west": { "model": "fineredgefundamentals:normal_excavation_marker_wall", "y": 180 },
+        "facing=north": { "model": "fineredgefundamentals:normal_excavation_marker_wall", "y": 270 }
+    }
+}
