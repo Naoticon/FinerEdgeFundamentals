@@ -3,7 +3,7 @@ package com.the7thcircle.fineredge.fundamentals.blocks;
 import java.util.Random;
 
 import com.the7thcircle.fineredge.fundamentals.FinerEdgeFundamentalsMod;
-import com.the7thcircle.fineredge.fundamentals.gui.FEFGUIHandler;
+import com.the7thcircle.fineredge.fundamentals.gui.FEFGuiHandler;
 import com.the7thcircle.fineredge.fundamentals.tileentity.TileEntityFEFMachine;
 
 import net.minecraft.block.Block;
@@ -38,10 +38,12 @@ public class BlockFEFMachine extends BlockContainer {
     
 	public BlockFEFMachine(Material blockMaterialIn, MapColor blockMapColorIn) {
 		super(blockMaterialIn, blockMapColorIn);
+		this.setHarvestLevel("pickaxe", 0);
 	}
 	
+	@Override
 	public Item getItemDropped(IBlockState state, Random rand, int fortune) {
-        return Item.getItemFromBlock(FEFBlocks.excavator);
+        return null;
     }
 	
 	@Override
@@ -117,6 +119,7 @@ public class BlockFEFMachine extends BlockContainer {
         }
     }
     
+    @Override
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         if (worldIn.isRemote) {
             return true;
@@ -125,7 +128,6 @@ public class BlockFEFMachine extends BlockContainer {
             TileEntity tileentity = worldIn.getTileEntity(pos);
 
             if (tileentity instanceof TileEntityFEFMachine) {
-                playerIn.openGui(FinerEdgeFundamentalsMod.INSTANCE, FEFGUIHandler.FEF_MACHINE_GUI, worldIn, pos.getX(), pos.getY(), pos.getZ());
             }
 
             return true;
@@ -137,6 +139,7 @@ public class BlockFEFMachine extends BlockContainer {
         return EnumBlockRenderType.MODEL;
     }
 	
+	@Override
 	public IBlockState getStateFromMeta(int meta) {
         EnumFacing enumfacing = EnumFacing.getFront(meta);
 

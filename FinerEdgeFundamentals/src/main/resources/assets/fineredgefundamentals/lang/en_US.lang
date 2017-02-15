@@ -1,3 +1,7 @@
 itemGroup.fefundamentals=Finer Edge Fundamentals
 
 tile.excavator.name=Excavator
+
+container.excavator=Excavator
+container.excavator.temperature_indicator=Temperature
+container.excavator.progress_indicator=Progress

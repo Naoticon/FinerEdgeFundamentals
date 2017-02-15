@@ -1,6 +1,6 @@
 package com.the7thcircle.fineredge.fundamentals;
 
-import com.the7thcircle.fineredge.fundamentals.gui.FEFGUIHandler;
+import com.the7thcircle.fineredge.fundamentals.gui.FEFGuiHandler;
 import com.the7thcircle.fineredge.fundamentals.tileentity.FEFTileEntities;
 
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -15,7 +15,7 @@ public class FEFCommonProxy {
 	}
 
 	public void init(FMLInitializationEvent event){
-		NetworkRegistry.INSTANCE.registerGuiHandler(FinerEdgeFundamentalsMod.INSTANCE, new FEFGUIHandler());
+		NetworkRegistry.INSTANCE.registerGuiHandler(FinerEdgeFundamentalsMod.INSTANCE, new FEFGuiHandler());
 	}
 
 	public void postInit(FMLPostInitializationEvent event){

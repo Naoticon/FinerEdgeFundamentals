@@ -6,15 +6,21 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ContainerFurnace;
+import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntityLockable;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ITickable;
 import net.minecraft.util.NonNullList;
 
-public class TileEntityFEFMachine extends TileEntityLockable {
+public class TileEntityFEFMachine extends TileEntityLockable implements ITickable, ISidedInventory{
 
-    private NonNullList<ItemStack> machineItemStacks = NonNullList.<ItemStack>withSize(3, ItemStack.EMPTY);
-    private String machineCustomName;
+	protected static final int MACHINE_SLOTS = 0;
+	
+    protected NonNullList<ItemStack> machineItemStacks = NonNullList.<ItemStack>withSize(MACHINE_SLOTS, ItemStack.EMPTY);
+    protected String machineCustomName;
 
 	@Override
 	public int getSizeInventory() {
@@ -51,10 +57,42 @@ public class TileEntityFEFMachine extends TileEntityLockable {
 
 	@Override
 	public void setInventorySlotContents(int index, ItemStack stack) {
-		// TODO Auto-generated method stub
-		
+		ItemStack itemstack = (ItemStack)this.machineItemStacks.get(index);
+        boolean flag = !stack.isEmpty() && stack.isItemEqual(itemstack) && ItemStack.areItemStackTagsEqual(stack, itemstack);
+        this.machineItemStacks.set(index, stack);
+
+        if (stack.getCount() > this.getInventoryStackLimit()) {
+            stack.setCount(this.getInventoryStackLimit());
+        }
 	}
 
+	@Override
+	public void readFromNBT(NBTTagCompound compound)
+    {
+        super.readFromNBT(compound);
+        this.machineItemStacks = NonNullList.<ItemStack>withSize(this.getSizeInventory(), ItemStack.EMPTY);
+        ItemStackHelper.loadAllItems(compound, this.machineItemStacks);
+
+        if (compound.hasKey("CustomName", 8))
+        {
+            this.machineCustomName = compound.getString("CustomName");
+        }
+    }
+
+	@Override
+    public NBTTagCompound writeToNBT(NBTTagCompound compound)
+    {
+        super.writeToNBT(compound);
+        ItemStackHelper.saveAllItems(compound, this.machineItemStacks);
+
+        if (this.hasCustomName())
+        {
+            compound.setString("CustomName", this.machineCustomName);
+        }
+
+        return compound;
+    }
+	
 	@Override
 	public int getInventoryStackLimit() {
 		return 64;
@@ -81,7 +119,6 @@ public class TileEntityFEFMachine extends TileEntityLockable {
 
 	@Override
 	public int getField(int id) {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
@@ -125,6 +162,30 @@ public class TileEntityFEFMachine extends TileEntityLockable {
 	public String getGuiID() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public int[] getSlotsForFace(EnumFacing side) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean canInsertItem(int index, ItemStack itemStackIn, EnumFacing direction) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean canExtractItem(int index, ItemStack stack, EnumFacing direction) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void update() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

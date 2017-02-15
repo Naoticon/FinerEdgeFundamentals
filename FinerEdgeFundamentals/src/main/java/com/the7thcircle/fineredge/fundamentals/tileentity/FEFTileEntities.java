@@ -10,5 +10,6 @@ public class FEFTileEntities {
 
 	public static void registerTileEntities(){
 		GameRegistry.registerTileEntity(TileEntityFEFMachine.class, "machine");
+		GameRegistry.registerTileEntity(TileEntityFEFExcavator.class, "excavator");
 	}
 }
