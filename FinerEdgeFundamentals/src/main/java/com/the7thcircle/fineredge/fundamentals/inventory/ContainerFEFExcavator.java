@@ -57,7 +57,9 @@ public class ContainerFEFExcavator extends ContainerFEFMachine {
             else if (index >= 13) {
                 //This is a shift-click from player inventory
             	if(TileEntityFEFExcavator.isItemCoolant(itemstack)) {
-            		
+            		Slot slot1 = (Slot)this.inventorySlots.get(11);
+            		if(!slot1.getHasStack() || slot1.isItemValid(itemstack)){
+            		}
             	}
             }
             else if (!this.mergeItemStack(itemstack1, 13, 49, false)) {
@@ -81,33 +83,29 @@ public class ContainerFEFExcavator extends ContainerFEFMachine {
         return itemstack;
     }
 	
-	public void detectAndSendChanges()
-    {
+	public void detectAndSendChanges() {
         super.detectAndSendChanges();
 
-        for (int i = 0; i < this.listeners.size(); ++i)
-        {
+        for (int i = 0; i < this.listeners.size(); ++i) {
             IContainerListener icontainerlistener = (IContainerListener)this.listeners.get(i);
 
-            if (this.remainingCoolTime != this.tileMachine.getField(0))
-            {
+            if (this.remainingCoolTime != this.tileMachine.getField(0)) {
                 icontainerlistener.sendProgressBarUpdate(this, 0, this.tileMachine.getField(0));
             }
 
-            if (this.currentItemCoolTime != this.tileMachine.getField(1))
-            {
-                icontainerlistener.sendProgressBarUpdate(this, 1, this.tileMachine.getField(1));
-            }
-
-            if (this.temperature != this.tileMachine.getField(2))
-            {
+            if (this.temperature != this.tileMachine.getField(2)) {
                 icontainerlistener.sendProgressBarUpdate(this, 2, this.tileMachine.getField(2));
+            }
+            
+            if (this.progress != this.tileMachine.getField(3)) {
+                icontainerlistener.sendProgressBarUpdate(this, 3, this.tileMachine.getField(3));
             }
         }
 
         this.remainingCoolTime = this.tileMachine.getField(0);
         this.currentItemCoolTime = this.tileMachine.getField(1);
         this.temperature = this.tileMachine.getField(2);
+        this.progress = this.tileMachine.getField(3);
     }
 
     @SideOnly(Side.CLIENT)

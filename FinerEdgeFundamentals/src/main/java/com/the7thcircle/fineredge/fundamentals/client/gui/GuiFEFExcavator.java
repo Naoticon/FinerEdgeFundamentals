@@ -88,7 +88,7 @@ public class GuiFEFExcavator extends GuiFEFMachine{
     }
     
     private int getProgressScaled(int pixels){
-        int i = this.tileMachine.getField(2);
+        int i = this.tileMachine.getField(3);
         return (int) ((float)pixels * (((float)i) / 99.f));
     }
 }
