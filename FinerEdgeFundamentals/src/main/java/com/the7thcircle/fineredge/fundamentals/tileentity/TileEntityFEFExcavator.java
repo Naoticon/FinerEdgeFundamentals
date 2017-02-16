@@ -7,9 +7,11 @@ import com.the7thcircle.fineredge.fundamentals.blocks.BlockFEFExcavator;
 import com.the7thcircle.fineredge.fundamentals.blocks.FEFBlocks;
 import com.the7thcircle.fineredge.fundamentals.inventory.ContainerFEFExcavator;
 import com.the7thcircle.fineredge.fundamentals.inventory.ContainerFEFMachine;
+import com.the7thcircle.fineredge.fundamentals.items.FEFItems;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFurnace;
+import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -30,12 +32,12 @@ import net.minecraft.util.math.BlockPos;
 public class TileEntityFEFExcavator extends TileEntityFEFMachine {
 
 	protected static final int MACHINE_SLOTS = 13;
-    private static final int[] SLOTS_ALL = new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8};
+	private static final int[] SLOTS_ALL = new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8};
 	protected NonNullList<ItemStack> machineItemStacks = NonNullList.<ItemStack>withSize(MACHINE_SLOTS, ItemStack.EMPTY);
 
 	private int remainingCoolTime, blocksToMine, currBlockNum, boundaryX, boundaryY, boundaryZ;
-	private float temperature, progress, miningSpeed;
-	private boolean hasBoundary, isFinished = false, isJammed = false;
+	private float temperature, progress, miningSpeed, currBlockProgress;
+	private boolean hasBoundary = false, isFinished = false, isJammed = false;
 	private BlockPos firstBlock = BlockPos.ORIGIN, lastBlock = BlockPos.ORIGIN, currBlock = BlockPos.ORIGIN;
 	private ItemStack jammedStack = ItemStack.EMPTY;
 
@@ -114,7 +116,7 @@ public class TileEntityFEFExcavator extends TileEntityFEFMachine {
 		if(compound.hasKey("JammedStack")) {
 			this.jammedStack = new ItemStack(compound.getCompoundTag("JammedStack"));
 		}
-		
+
 		if (compound.hasKey("CustomName", 8))
 		{
 			this.machineCustomName = compound.getString("CustomName");
@@ -150,11 +152,11 @@ public class TileEntityFEFExcavator extends TileEntityFEFMachine {
 		compound.setInteger("CurrentBlockPosZ", currBlock.getZ());
 
 		if(!this.jammedStack.isEmpty()) {
-            NBTTagCompound jammedStackCompound = new NBTTagCompound();
+			NBTTagCompound jammedStackCompound = new NBTTagCompound();
 			this.jammedStack.writeToNBT(jammedStackCompound);
 			compound.setTag("JammedStack", jammedStackCompound);
 		}
-		
+
 		if (this.hasCustomName())
 		{
 			compound.setString("CustomName", this.machineCustomName);
@@ -239,27 +241,27 @@ public class TileEntityFEFExcavator extends TileEntityFEFMachine {
 		if(index == 11) return isItemCoolant(stack);
 		return false;
 	}
-	
+
 	@Override
 	public int[] getSlotsForFace(EnumFacing side)
-    {
+	{
 		if(side == this.world.getBlockState(this.pos).getValue(((BlockFEFExcavator)this.blockType).FACING) || side == this.world.getBlockState(this.pos).getValue(((BlockFEFExcavator)this.blockType).FACING).getOpposite()) return null;
 		return SLOTS_ALL;
-    }
-	
+	}
+
 	@Override
 	public boolean canExtractItem(int index, ItemStack stack, EnumFacing direction)
-    {
-        if(index > 8) return false;
-        return true;
-    }
-	
+	{
+		if(index > 8) return false;
+		return true;
+	}
+
 	@Override
 	public boolean canInsertItem(int index, ItemStack itemStackIn, EnumFacing direction)
-    {
+	{
 		if(index >= 9 && (index != 9 && index != 10 && index != 12)) return this.isItemValidForSlot(index, itemStackIn);
 		return false;
-    }
+	}
 
 	@Override
 	public void update(){
@@ -267,16 +269,20 @@ public class TileEntityFEFExcavator extends TileEntityFEFMachine {
 		boolean wasMining = this.isMining();
 		boolean shouldUpdate = false;
 
-		if (this.isMining()){
-			if (this.remainingCoolTime > 0){
-				if(this.temperature > 0) this.temperature -= 0.05f;
-				--this.remainingCoolTime;
-			}
-			else if(this.temperature < 95.f) this.temperature += 0.025f;
-		}
-		else if(this.temperature > 0.f) this.temperature -= 0.05f;
-
 		if(!this.world.isRemote){
+			int numSpeedUpgrades = (this.machineItemStacks.get(9).getItem().equals(FEFItems.upgradeSpeed) ? this.machineItemStacks.get(9).getCount() : 0) + (this.machineItemStacks.get(10).getItem().equals(FEFItems.upgradeSpeed) ? this.machineItemStacks.get(10).getCount() : 0);
+			int numSpeedDownUpgrades = (this.machineItemStacks.get(9).getItem().equals(FEFItems.upgradeSpeedDown) ? this.machineItemStacks.get(9).getCount() : 0) + (this.machineItemStacks.get(10).getItem().equals(FEFItems.upgradeSpeedDown) ? this.machineItemStacks.get(10).getCount() : 0);
+			this.miningSpeed = (float) ((1.f + (1.f * numSpeedUpgrades)) * (Math.pow(0.9f, numSpeedDownUpgrades)));
+
+			if (this.isMining()){
+				if (this.remainingCoolTime > 0){
+					if(this.temperature > 0) this.temperature -= 0.05f;
+					--this.remainingCoolTime;
+				}
+				else if(this.temperature < 95.f) this.temperature += 0.025f;
+			}
+			else if(this.temperature > 0.f) this.temperature -= 0.05f;
+
 			ItemStack itemstack = (ItemStack)this.machineItemStacks.get(11);
 			if(this.isMining() && this.remainingCoolTime == 0 && !itemstack.isEmpty()){
 
@@ -412,42 +418,73 @@ public class TileEntityFEFExcavator extends TileEntityFEFMachine {
 				++currBlockNum;
 				this.currBlock = new BlockPos(currBlockNum % boundaryX + firstBlock.getX(), firstBlock.getY() - currBlockNum / (boundaryX * boundaryZ), ((currBlockNum % (boundaryX * boundaryZ))) / boundaryX + firstBlock.getZ());
 			}
-			if(this.world.getBlockState(currBlock).getBlock() != Blocks.AIR && this.world.getBlockState(currBlock).getBlock() != Blocks.BEDROCK && this.world.getBlockState(currBlock).getBlock() != FEFBlocks.excavator){
-				Item blockDrops = this.world.getBlockState(currBlock).getBlock().getItemDropped(this.world.getBlockState(currBlock), this.world.rand, 0);
-				int blockDropMeta = this.world.getBlockState(currBlock).getBlock().damageDropped(this.world.getBlockState(currBlock));
-				int numDrops = this.world.getBlockState(currBlock).getBlock().quantityDropped(this.world.getBlockState(currBlock), 0, this.world.rand);
-				ItemStack blockItemStack = new ItemStack(blockDrops, numDrops, blockDropMeta);
 
-				for(int i = 0; i < 9; ++i){
-					if(blockItemStack.getCount() > 0){
-						if(this.machineItemStacks.get(i).isEmpty()){
-							this.machineItemStacks.set(i, blockItemStack);
-							blockItemStack = ItemStack.EMPTY;
-							break;
+			this.currBlockProgress += 0.025f * this.miningSpeed;
+			if(currBlockProgress >= 1.f){
+				if(this.world.getBlockState(currBlock).getBlock() != Blocks.AIR && this.world.getBlockState(currBlock).getBlock() != Blocks.BEDROCK && this.world.getBlockState(currBlock).getBlock() != FEFBlocks.excavator){
+					//If we don't have a liquid upgrade, don't evacuate liquids
+					if(!(this.world.getBlockState(currBlock).getBlock() instanceof BlockLiquid) || this.machineItemStacks.get(9).getItem().equals(FEFItems.upgradeLiquidPump) || this.machineItemStacks.get(10).getItem().equals(FEFItems.upgradeLiquidPump)){
+						ItemStack blockItemStack = ItemStack.EMPTY;
+
+						if(this.machineItemStacks.get(9).getItem().equals(FEFItems.upgradeSilkTouch) || this.machineItemStacks.get(10).getItem().equals(FEFItems.upgradeSilkTouch)){
+							blockItemStack = new ItemStack(Item.getItemFromBlock(this.world.getBlockState(currBlock).getBlock()), 1);
 						}
-						if(this.machineItemStacks.get(i).isItemEqual(blockItemStack)){
-							if(this.machineItemStacks.get(i).getCount() + blockItemStack.getCount() <= this.machineItemStacks.get(i).getMaxStackSize()){
-								this.machineItemStacks.get(i).setCount(this.machineItemStacks.get(i).getCount() + blockItemStack.getCount());
-								blockItemStack = ItemStack.EMPTY;
-								break;
+
+						else{
+							Item blockDrops;
+							int numDrops;
+							if(this.machineItemStacks.get(9).getItem().equals(FEFItems.upgradeFortune) || this.machineItemStacks.get(10).getItem().equals(FEFItems.upgradeFortune)){
+								blockDrops = this.world.getBlockState(currBlock).getBlock().getItemDropped(this.world.getBlockState(currBlock), this.world.rand, 3);
+								numDrops = this.world.getBlockState(currBlock).getBlock().quantityDropped(this.world.getBlockState(currBlock), 3, this.world.rand);
 							}
 							else{
-								int toSplit = this.machineItemStacks.get(i).getMaxStackSize() - this.machineItemStacks.get(i).getCount();
-								this.machineItemStacks.get(i).setCount(this.machineItemStacks.get(i).getMaxStackSize());
-								blockItemStack.shrink(toSplit);
+								blockDrops = this.world.getBlockState(currBlock).getBlock().getItemDropped(this.world.getBlockState(currBlock), this.world.rand, 0);
+								numDrops = this.world.getBlockState(currBlock).getBlock().quantityDropped(this.world.getBlockState(currBlock), 0, this.world.rand);
+							}
+							
+							int blockDropMeta = this.world.getBlockState(currBlock).getBlock().damageDropped(this.world.getBlockState(currBlock));
+							blockItemStack = new ItemStack(blockDrops, numDrops, blockDropMeta);
+						}
+
+						for(int i = 0; i < 9; ++i){
+							if(blockItemStack.getCount() > 0){
+								if(this.machineItemStacks.get(i).isEmpty()){
+									this.machineItemStacks.set(i, blockItemStack);
+									blockItemStack = ItemStack.EMPTY;
+									break;
+								}
+								if(this.machineItemStacks.get(i).isItemEqual(blockItemStack)){
+									if(this.machineItemStacks.get(i).getCount() + blockItemStack.getCount() <= this.machineItemStacks.get(i).getMaxStackSize()){
+										this.machineItemStacks.get(i).setCount(this.machineItemStacks.get(i).getCount() + blockItemStack.getCount());
+										blockItemStack = ItemStack.EMPTY;
+										break;
+									}
+									else{
+										int toSplit = this.machineItemStacks.get(i).getMaxStackSize() - this.machineItemStacks.get(i).getCount();
+										this.machineItemStacks.get(i).setCount(this.machineItemStacks.get(i).getMaxStackSize());
+										blockItemStack.shrink(toSplit);
+									}
+								}
 							}
 						}
-					}
-				}
-				
-				if(blockItemStack.getCount() > 0){
-					this.isJammed = true;
-					this.jammedStack = blockItemStack;
-				}
 
-				this.world.setBlockToAir(currBlock);
+						if(blockItemStack.getCount() > 0){
+							this.isJammed = true;
+							this.jammedStack = blockItemStack;
+						}
+
+						if(this.machineItemStacks.get(9).getItem().equals(FEFItems.upgradeStoneFill) || this.machineItemStacks.get(10).getItem().equals(FEFItems.upgradeStoneFill)){
+							this.world.setBlockState(currBlock, Blocks.STONE.getDefaultState());
+						}
+						else{
+							this.world.setBlockToAir(currBlock);
+						}
+					}
+					if(currBlockNum < blocksToMine) ++currBlockNum;
+					this.currBlockProgress = 0.f;
+				}
 			}
-			if(currBlockNum < blocksToMine) ++currBlockNum;
+
 			if(currBlockNum == blocksToMine){
 				this.isFinished = true;
 			}
@@ -482,9 +519,26 @@ public class TileEntityFEFExcavator extends TileEntityFEFMachine {
 				}
 			}
 		}
-		
+
 		if(shouldUpdate){
 			this.markDirty();
 		}
+	}
+
+	net.minecraftforge.items.IItemHandler handlerTop = new net.minecraftforge.items.wrapper.SidedInvWrapper(this, net.minecraft.util.EnumFacing.UP);
+	net.minecraftforge.items.IItemHandler handlerBottom = new net.minecraftforge.items.wrapper.SidedInvWrapper(this, net.minecraft.util.EnumFacing.DOWN);
+	net.minecraftforge.items.IItemHandler handlerSide = new net.minecraftforge.items.wrapper.SidedInvWrapper(this, net.minecraft.util.EnumFacing.WEST);
+
+	@Override
+	public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @javax.annotation.Nullable net.minecraft.util.EnumFacing facing)
+	{
+		if (facing != null && capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
+			if (facing == EnumFacing.DOWN)
+				return (T) handlerBottom;
+			else if (facing == EnumFacing.UP)
+				return (T) handlerTop;
+			else
+				return (T) handlerSide;
+		return super.getCapability(capability, facing);
 	}
 }

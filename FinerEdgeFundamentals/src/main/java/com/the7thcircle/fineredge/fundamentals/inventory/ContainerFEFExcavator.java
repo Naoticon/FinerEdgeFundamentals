@@ -22,8 +22,8 @@ public class ContainerFEFExcavator extends ContainerFEFMachine {
         	this.addSlotToContainer(new SlotFEFMachineOutput(playerInventory.player, machineInventory, i, 8 + i * 18, 68));
         }
         
-        this.addSlotToContainer(new Slot(machineInventory, 9, 8, 17));
-        this.addSlotToContainer(new Slot(machineInventory, 10, 8, 39));
+        this.addSlotToContainer(new SlotFEFMachineUpgrade(machineInventory, 9, 8, 17));
+        this.addSlotToContainer(new SlotFEFMachineUpgrade(machineInventory, 10, 8, 39));
         this.addSlotToContainer(new SlotFEFExcavatorCoolant(machineInventory, 11, 152, 17));
         this.addSlotToContainer(new SlotFEFMachineOutput(playerInventory.player, machineInventory, 12, 152, 39));
 

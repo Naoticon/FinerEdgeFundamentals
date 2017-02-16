@@ -15,13 +15,13 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 @Mod.EventBusSubscriber
 public class FEFItems {
 	
-	public static Item upgradeBase = new Item().setRegistryName("upgrade_base").setUnlocalizedName("upgrade_base").setCreativeTab(FEFCreativeTabs.FEFUNDAMENTALS);
-	public static Item upgradeSpeed = new Item().setRegistryName("upgrade_speed").setUnlocalizedName("upgrade_speed").setCreativeTab(FEFCreativeTabs.FEFUNDAMENTALS);
-	public static Item upgradeSpeedDown = new Item().setRegistryName("upgrade_speed_down").setUnlocalizedName("upgrade_speed_down").setCreativeTab(FEFCreativeTabs.FEFUNDAMENTALS);
-	public static Item upgradeSilkTouch = new Item().setRegistryName("upgrade_silk_touch").setUnlocalizedName("upgrade_silk_touch").setCreativeTab(FEFCreativeTabs.FEFUNDAMENTALS);
-	public static Item upgradeFortune = new Item().setRegistryName("upgrade_fortune").setUnlocalizedName("upgrade_fortune").setCreativeTab(FEFCreativeTabs.FEFUNDAMENTALS);
-	public static Item upgradeLiquidPump = new Item().setRegistryName("upgrade_liquid_pump").setUnlocalizedName("upgrade_liquid_pump").setCreativeTab(FEFCreativeTabs.FEFUNDAMENTALS);
-	public static Item upgradeStoneFill = new Item().setRegistryName("upgrade_stone_fill").setUnlocalizedName("upgrade_stone_fill").setCreativeTab(FEFCreativeTabs.FEFUNDAMENTALS);
+	public static ItemFEFMachineUpgrade upgradeBase = (ItemFEFMachineUpgrade) new ItemFEFMachineUpgrade().setRegistryName("upgrade_base").setUnlocalizedName("upgrade_base").setCreativeTab(FEFCreativeTabs.FEFUNDAMENTALS);
+	public static ItemFEFMachineUpgrade upgradeSpeed = (ItemFEFMachineUpgrade) new ItemFEFMachineUpgrade().setRegistryName("upgrade_speed").setUnlocalizedName("upgrade_speed").setCreativeTab(FEFCreativeTabs.FEFUNDAMENTALS);
+	public static ItemFEFMachineUpgrade upgradeSpeedDown = (ItemFEFMachineUpgrade) new ItemFEFMachineUpgrade().setRegistryName("upgrade_speed_down").setUnlocalizedName("upgrade_speed_down").setCreativeTab(FEFCreativeTabs.FEFUNDAMENTALS);
+	public static ItemFEFMachineUpgrade upgradeSilkTouch = (ItemFEFMachineUpgrade) new ItemFEFMachineUpgrade().setRegistryName("upgrade_silk_touch").setUnlocalizedName("upgrade_silk_touch").setCreativeTab(FEFCreativeTabs.FEFUNDAMENTALS).setMaxStackSize(1);
+	public static ItemFEFMachineUpgrade upgradeFortune = (ItemFEFMachineUpgrade) new ItemFEFMachineUpgrade().setRegistryName("upgrade_fortune").setUnlocalizedName("upgrade_fortune").setCreativeTab(FEFCreativeTabs.FEFUNDAMENTALS).setMaxStackSize(1);
+	public static ItemFEFMachineUpgrade upgradeLiquidPump = (ItemFEFMachineUpgrade) new ItemFEFMachineUpgrade().setRegistryName("upgrade_liquid_pump").setUnlocalizedName("upgrade_liquid_pump").setCreativeTab(FEFCreativeTabs.FEFUNDAMENTALS).setMaxStackSize(1);
+	public static ItemFEFMachineUpgrade upgradeStoneFill = (ItemFEFMachineUpgrade) new ItemFEFMachineUpgrade().setRegistryName("upgrade_stone_fill").setUnlocalizedName("upgrade_stone_fill").setCreativeTab(FEFCreativeTabs.FEFUNDAMENTALS).setMaxStackSize(1);
 
 	@SubscribeEvent
 	public static void registerItems(RegistryEvent.Register<Item> event){

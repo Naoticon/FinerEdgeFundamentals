@@ -46,7 +46,7 @@ public class GuiFEFExcavator extends GuiFEFMachine{
         this.drawTexturedModalRect(i, j, 0, 0, this.xSize, this.ySize);
 
         int tempSize = this.getTemperatureScaled(38);
-        this.drawTexturedModalRect(i + 137, j + 55 - tempSize, 10, 224 - tempSize, 10, tempSize);
+        this.drawTexturedModalRect(i + 137, j + 55 - tempSize, 10, 225 - tempSize, 10, tempSize);
         
         int progressSize = this.getProgressScaled(160);
         this.drawTexturedModalRect(i + 8, j + 59, 0, 182, progressSize, 5);
