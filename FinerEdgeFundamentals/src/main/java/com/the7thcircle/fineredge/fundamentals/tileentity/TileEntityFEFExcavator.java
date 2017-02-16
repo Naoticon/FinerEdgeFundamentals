@@ -257,7 +257,7 @@ public class TileEntityFEFExcavator extends TileEntityFEFMachine {
 	@Override
 	public boolean canInsertItem(int index, ItemStack itemStackIn, EnumFacing direction)
     {
-		if(index < 9 && (index != 9 && index != 10 && index != 12)) return this.isItemValidForSlot(index, itemStackIn);
+		if(index >= 9 && (index != 9 && index != 10 && index != 12)) return this.isItemValidForSlot(index, itemStackIn);
 		return false;
     }
 
@@ -412,7 +412,7 @@ public class TileEntityFEFExcavator extends TileEntityFEFMachine {
 				++currBlockNum;
 				this.currBlock = new BlockPos(currBlockNum % boundaryX + firstBlock.getX(), firstBlock.getY() - currBlockNum / (boundaryX * boundaryZ), ((currBlockNum % (boundaryX * boundaryZ))) / boundaryX + firstBlock.getZ());
 			}
-			if(this.world.getBlockState(currBlock).getBlock() != Blocks.AIR && this.world.getBlockState(currBlock).getBlock() != Blocks.BEDROCK){
+			if(this.world.getBlockState(currBlock).getBlock() != Blocks.AIR && this.world.getBlockState(currBlock).getBlock() != Blocks.BEDROCK && this.world.getBlockState(currBlock).getBlock() != FEFBlocks.excavator){
 				Item blockDrops = this.world.getBlockState(currBlock).getBlock().getItemDropped(this.world.getBlockState(currBlock), this.world.rand, 0);
 				int blockDropMeta = this.world.getBlockState(currBlock).getBlock().damageDropped(this.world.getBlockState(currBlock));
 				int numDrops = this.world.getBlockState(currBlock).getBlock().quantityDropped(this.world.getBlockState(currBlock), 0, this.world.rand);

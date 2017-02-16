@@ -26,7 +26,7 @@ public class FEFBlocks {
 	public static BlockFEFExcavationMarker excavationMarker = (BlockFEFExcavationMarker) new BlockFEFExcavationMarker().setRegistryName("excavation_marker").setUnlocalizedName("excavation_marker");
 	
 	public static ItemBlock excavatorItem = (ItemBlock) new ItemBlock(excavator).setRegistryName("excavator").setUnlocalizedName("excavator");
-	public static ItemBlock excavationMarkerItem = (ItemBlock) new ItemBlock(excavationMarker).setRegistryName("excavation_marker").setUnlocalizedName("excavation_marker");
+	public static ItemBlock excavationMarkerItem = (ItemBlock) new ItemBlock(excavationMarker).setRegistryName("excavation_marker").setUnlocalizedName("excavation_marker").setMaxStackSize(16);
 	
 	@SubscribeEvent
 	public static void registerBlocks(RegistryEvent.Register<Block> event){
