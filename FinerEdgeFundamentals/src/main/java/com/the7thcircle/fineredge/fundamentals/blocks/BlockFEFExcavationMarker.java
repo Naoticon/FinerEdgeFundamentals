@@ -18,7 +18,6 @@ public class BlockFEFExcavationMarker extends BlockTorch {
 	public BlockFEFExcavationMarker(){
 		super();
 		this.setTickRandomly(false);
-		this.setCreativeTab(FEFCreativeTabs.FEFUNDAMENTALS);
 		this.setLightLevel(0.9375F);
 	}
 	

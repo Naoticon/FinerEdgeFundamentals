@@ -2,7 +2,7 @@
     "parent": "fineredgefundamentals:block/directional",
     "textures": {
         "top": "fineredgefundamentals:blocks/machine_side",
-		"front": "fineredgefundamentals:blocks/excavator_front_off",
+		"front": "fineredgefundamentals:blocks/gardener_front_off",
         "back": "fineredgefundamentals:blocks/machine_back",
         "bottom": "fineredgefundamentals:blocks/machine_side",
         "left": "fineredgefundamentals:blocks/machine_side",

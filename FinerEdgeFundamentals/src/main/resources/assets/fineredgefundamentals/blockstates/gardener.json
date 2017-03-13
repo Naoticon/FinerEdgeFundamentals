@@ -1,0 +1,9 @@
+{
+	"variants": {
+		"normal": { "model": "fineredgefundamentals:gardener"},
+        "facing=north": { "model": "fineredgefundamentals:gardener" },
+        "facing=south": { "model": "fineredgefundamentals:gardener", "y": 180 },
+        "facing=west":  { "model": "fineredgefundamentals:gardener", "y": 270 },
+        "facing=east":  { "model": "fineredgefundamentals:gardener", "y": 90 }
+    }
+}

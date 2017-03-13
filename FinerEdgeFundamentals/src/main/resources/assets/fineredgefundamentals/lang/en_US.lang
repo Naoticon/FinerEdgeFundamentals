@@ -2,15 +2,22 @@ itemGroup.fefundamentals=Finer Edge Fundamentals
 
 tile.excavator.name=Excavator
 tile.excavation_marker.name=Excavation Marker
+tile.logger.name=Logger
+tile.gardener.name=Gardener
 
 item.upgrade_base.name=Upgrade Base
 item.upgrade_speed.name=Upgrade (Speed)
 item.upgrade_speed_down.name=Upgrade (Speed Down)
+item.upgrade_range.name=Upgrade (Range)
+item.upgrade_range_down.name=Upgrade (Range Down)
 item.upgrade_silk_touch.name=Upgrade (Silk Touch)
 item.upgrade_fortune.name=Upgrade (Fortune)
 item.upgrade_liquid_pump.name=Upgrade (Liquid Pump)
 item.upgrade_stone_fill.name=Upgrade (Stone Fill)
 
+container.machine.temperature_indicator=Temperature
+container.machine.progress_indicator=Progress
+container.machine.energy_consumption=Consuming
 container.excavator=Excavator
-container.excavator.temperature_indicator=Temperature
-container.excavator.progress_indicator=Progress
+container.logger=Logger
+container.gardener=Gardener

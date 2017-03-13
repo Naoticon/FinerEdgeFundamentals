@@ -1,0 +1,9 @@
+{
+	"variants": {
+		"normal": { "model": "fineredgefundamentals:logger"},
+        "facing=north": { "model": "fineredgefundamentals:logger" },
+        "facing=south": { "model": "fineredgefundamentals:logger", "y": 180 },
+        "facing=west":  { "model": "fineredgefundamentals:logger", "y": 270 },
+        "facing=east":  { "model": "fineredgefundamentals:logger", "y": 90 }
+    }
+}
