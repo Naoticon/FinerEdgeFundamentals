@@ -59,10 +59,10 @@ public class ContainerFEFMachine extends Container {
 	@Override
 	public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
         ItemStack itemstack = ItemStack.EMPTY;
-        Slot slot = this.inventorySlots.get(index);
+        Slot sourceSlot = this.inventorySlots.get(index);
 
-        if (slot != null && slot.getHasStack()) {
-            ItemStack itemstack1 = slot.getStack();
+        if (sourceSlot != null && sourceSlot.getHasStack()) {
+            ItemStack itemstack1 = sourceSlot.getStack();
             itemstack = itemstack1.copy();
 
             if (index >= 0 && index < 9) {
@@ -70,14 +70,15 @@ public class ContainerFEFMachine extends Container {
                     return ItemStack.EMPTY;
                 }
 
-                slot.onSlotChange(itemstack1, itemstack);
+                sourceSlot.onSlotChange(itemstack1, itemstack);
             }
             else if (index >= 13) {
                 //This is a shift-click from player inventory
             	if(TileEntityFEFMachine.isItemCoolant(itemstack)) {
-            		Slot slot1 = this.inventorySlots.get(11);
-            		if(!slot1.getHasStack() || slot1.isItemValid(itemstack)){
-            		}
+            		if(this.mergeItemStack(itemstack1, 11, 12, false)) return ItemStack.EMPTY;
+            	}
+            	if (TileEntityFEFMachine.isItemUpgrade(itemstack)){
+            		if(this.mergeItemStack(itemstack1, 9, 11, false)) return ItemStack.EMPTY;
             	}
             }
             else if (!this.mergeItemStack(itemstack1, 13, 49, false)) {
@@ -85,17 +86,17 @@ public class ContainerFEFMachine extends Container {
             }
 
             if (itemstack1.isEmpty()) {
-                slot.putStack(ItemStack.EMPTY);
+                sourceSlot.putStack(ItemStack.EMPTY);
             }
             else {
-                slot.onSlotChanged();
+                sourceSlot.onSlotChanged();
             }
 
             if (itemstack1.getCount() == itemstack.getCount()) {
                 return ItemStack.EMPTY;
             }
 
-            slot.onTake(playerIn, itemstack1);
+            sourceSlot.onTake(playerIn, itemstack1);
         }
 
         return itemstack;

@@ -1,7 +1,5 @@
 package com.the7thcircle.fineredge.fundamentals.tileentity;
 
-import com.the7thcircle.fineredge.fundamentals.blocks.BlockFEFExcavator;
-import com.the7thcircle.fineredge.fundamentals.blocks.BlockFEFMachine;
 import com.the7thcircle.fineredge.fundamentals.inventory.ContainerFEFMachineInput;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -17,7 +15,7 @@ public class TileEntityFEFMachineInput extends TileEntityFEFMachine {
 	
 	protected static final int MACHINE_SLOTS = 22;
 	protected NonNullList<ItemStack> machineItemStacks = NonNullList.<ItemStack>withSize(MACHINE_SLOTS, ItemStack.EMPTY);
-	protected static final int[] SLOTS_ALL = new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 13, 14, 15, 16, 17, 18, 19, 20, 21};
+	protected static final int[] SLOTS_ALL = new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21};
 
     @Override
 	public int getSizeInventory() {
@@ -87,8 +85,14 @@ public class TileEntityFEFMachineInput extends TileEntityFEFMachine {
 
 	@Override
 	public boolean isItemValidForSlot(int index, ItemStack stack) {
-		if(index == 11) return isItemCoolant(stack);
-		return false;
+		if(index >= 13 && index < 22) return true;
+		return super.isItemValidForSlot(index, stack);
+	}
+
+	@Override
+	public int[] getSlotsForFace(EnumFacing side)
+	{
+		return SLOTS_ALL;
 	}
 
 	@Override
@@ -97,24 +101,9 @@ public class TileEntityFEFMachineInput extends TileEntityFEFMachine {
 	}
 
 	@Override
-	public int[] getSlotsForFace(EnumFacing side)
-	{
-		if(side == this.world.getBlockState(this.pos).getValue(BlockFEFMachine.FACING) || side == this.world.getBlockState(this.pos).getValue(BlockFEFMachine.FACING).getOpposite()) return null;
-		return SLOTS_ALL;
-	}
-
-	@Override
-	public boolean canExtractItem(int index, ItemStack stack, EnumFacing direction)
-	{
-		if(index > 8) return false;
-		return true;
-	}
-
-	@Override
 	public boolean canInsertItem(int index, ItemStack itemStackIn, EnumFacing direction)
 	{
-		if((index >= 9 && index < 13) && (index != 9 && index != 10 && index != 12)) return this.isItemValidForSlot(index, itemStackIn);
-		else if(index >= 13 && index < 22) return true;
-		return false;
+		if(index >= 13 && index < 22) return isItemValidForSlot(index, itemStackIn);
+		return super.canInsertItem(index, itemStackIn, direction);
 	}
 }

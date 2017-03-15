@@ -2,7 +2,6 @@ package com.the7thcircle.fineredge.fundamentals.client.gui;
 
 import com.the7thcircle.fineredge.fundamentals.items.FEFItems;
 
-import net.minecraft.client.resources.I18n;
 import net.minecraft.item.Item;
 import net.minecraft.stats.Achievement;
 import net.minecraft.stats.AchievementList;

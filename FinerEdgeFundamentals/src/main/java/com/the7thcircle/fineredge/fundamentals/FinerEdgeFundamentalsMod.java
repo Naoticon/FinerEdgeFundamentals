@@ -19,16 +19,16 @@ public class FinerEdgeFundamentalsMod {
 	
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
-    	this.proxy.preInit(event);
+    	FinerEdgeFundamentalsMod.proxy.preInit(event);
     }
     
     @EventHandler
     public void init(FMLInitializationEvent event) {
-    	this.proxy.init(event);
+    	FinerEdgeFundamentalsMod.proxy.init(event);
     }
     
     @EventHandler
     public void postInit(FMLPostInitializationEvent event) {
-    	this.proxy.postInit(event);
+    	FinerEdgeFundamentalsMod.proxy.postInit(event);
     }
 }

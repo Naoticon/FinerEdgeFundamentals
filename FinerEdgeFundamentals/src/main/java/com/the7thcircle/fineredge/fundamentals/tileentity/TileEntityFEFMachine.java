@@ -4,7 +4,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 
-import com.the7thcircle.fineredge.fundamentals.blocks.BlockFEFExcavator;
 import com.the7thcircle.fineredge.fundamentals.blocks.BlockFEFMachine;
 import com.the7thcircle.fineredge.fundamentals.inventory.ContainerFEFMachine;
 import com.the7thcircle.fineredge.fundamentals.items.FEFItems;
@@ -32,7 +31,7 @@ import net.minecraftforge.energy.IEnergyStorage;
 public class TileEntityFEFMachine extends TileEntityLockable implements ITickable, ISidedInventory, IEnergyStorage{
 
 	protected static final int MACHINE_SLOTS = 13;
-	private static final int[] SLOTS_ALL = new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8};
+	private static final int[] SLOTS_ALL = new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
 	protected NonNullList<ItemStack> machineItemStacks = NonNullList.<ItemStack>withSize(MACHINE_SLOTS, ItemStack.EMPTY);
 
 	protected String machineCustomName;
@@ -230,13 +229,13 @@ public class TileEntityFEFMachine extends TileEntityLockable implements ITickabl
 	@Override
 	public boolean isItemValidForSlot(int index, ItemStack stack) {
 		if(index == 11) return isItemCoolant(stack);
+		else if(index == 9 || index == 10) return isItemUpgrade(stack);
 		return false;
 	}
 
 	@Override
 	public int[] getSlotsForFace(EnumFacing side)
 	{
-		if(side == this.world.getBlockState(this.pos).getValue(BlockFEFMachine.FACING) || side == this.world.getBlockState(this.pos).getValue(BlockFEFMachine.FACING).getOpposite()) return null;
 		return SLOTS_ALL;
 	}
 
@@ -250,7 +249,7 @@ public class TileEntityFEFMachine extends TileEntityLockable implements ITickabl
 	@Override
 	public boolean canInsertItem(int index, ItemStack itemStackIn, EnumFacing direction)
 	{
-		if(index >= 9 && (index != 9 && index != 10 && index != 12)) return this.isItemValidForSlot(index, itemStackIn);
+		if(index >= 9 && index < 13) return isItemValidForSlot(index, itemStackIn);
 		return false;
 	}
 
@@ -467,6 +466,11 @@ public class TileEntityFEFMachine extends TileEntityLockable implements ITickabl
 
 	public static boolean isItemCoolant(ItemStack stack){
 		return getItemCoolTime(stack) > 0;
+	}
+	
+	public static boolean isItemUpgrade(ItemStack stack){
+		Item i = stack.getItem();
+		return (i.equals(FEFItems.UPGRADE_FORTUNE) || i.equals(FEFItems.UPGRADE_LIQUID_PUMP) || i.equals(FEFItems.UPGRADE_RANGE) || i.equals(FEFItems.UPGRADE_RANGE_DOWN) || i.equals(FEFItems.UPGRADE_SILK_TOUCH) | i.equals(FEFItems.UPGRADE_SPEED) || i.equals(FEFItems.UPGRADE_SPEED_DOWN) || i.equals(FEFItems.UPGRADE_STONE_FILL));
 	}
 
 	public static ItemStack getSilkDrop(World world, BlockPos pos)
