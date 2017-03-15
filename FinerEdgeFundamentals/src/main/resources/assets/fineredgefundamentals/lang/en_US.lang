@@ -4,6 +4,8 @@ tile.excavator.name=Excavator
 tile.excavation_marker.name=Excavation Marker
 tile.logger.name=Logger
 tile.gardener.name=Gardener
+tile.darkened_stone.name=Darkened Stone
+tile.scorched_stone.name=Scorched Stone
 
 item.upgrade_base.name=Upgrade Base
 item.upgrade_speed.name=Upgrade (Speed)
@@ -14,6 +16,7 @@ item.upgrade_silk_touch.name=Upgrade (Silk Touch)
 item.upgrade_fortune.name=Upgrade (Fortune)
 item.upgrade_liquid_pump.name=Upgrade (Liquid Pump)
 item.upgrade_stone_fill.name=Upgrade (Stone Fill)
+item.activated_ender_eye.name=Activated Ender Eye
 
 container.machine.temperature_indicator=Temperature
 container.machine.progress_indicator=Progress

@@ -4,7 +4,6 @@ import java.util.Random;
 
 import com.the7thcircle.fineredge.fundamentals.FinerEdgeFundamentalsMod;
 import com.the7thcircle.fineredge.fundamentals.gui.FEFGuiHandler;
-import com.the7thcircle.fineredge.fundamentals.tileentity.TileEntityFEFExcavator;
 import com.the7thcircle.fineredge.fundamentals.tileentity.TileEntityFEFLogger;
 
 import net.minecraft.block.material.MapColor;
@@ -26,7 +25,7 @@ public class BlockFEFLogger extends BlockFEFMachine {
 	
 	@Override
 	public Item getItemDropped(IBlockState state, Random rand, int fortune) {
-        return Item.getItemFromBlock(FEFBlocks.logger);
+        return Item.getItemFromBlock(FEFBlocks.LOGGER);
     }
 	
 	@Override

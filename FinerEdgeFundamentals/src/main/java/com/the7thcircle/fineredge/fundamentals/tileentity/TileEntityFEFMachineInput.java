@@ -1,14 +1,13 @@
 package com.the7thcircle.fineredge.fundamentals.tileentity;
 
 import com.the7thcircle.fineredge.fundamentals.blocks.BlockFEFExcavator;
+import com.the7thcircle.fineredge.fundamentals.blocks.BlockFEFMachine;
 import com.the7thcircle.fineredge.fundamentals.inventory.ContainerFEFMachineInput;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ItemStackHelper;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -40,7 +39,7 @@ public class TileEntityFEFMachineInput extends TileEntityFEFMachine {
 
 	@Override
 	public ItemStack getStackInSlot(int index) {
-        return (ItemStack)this.machineItemStacks.get(index);
+        return this.machineItemStacks.get(index);
 	}
 
 	@Override
@@ -55,7 +54,7 @@ public class TileEntityFEFMachineInput extends TileEntityFEFMachine {
 
 	@Override
 	public void setInventorySlotContents(int index, ItemStack stack) {
-		ItemStack itemstack = (ItemStack)this.machineItemStacks.get(index);
+		ItemStack itemstack = this.machineItemStacks.get(index);
         boolean flag = !stack.isEmpty() && stack.isItemEqual(itemstack) && ItemStack.areItemStackTagsEqual(stack, itemstack);
         this.machineItemStacks.set(index, stack);
 
@@ -100,7 +99,7 @@ public class TileEntityFEFMachineInput extends TileEntityFEFMachine {
 	@Override
 	public int[] getSlotsForFace(EnumFacing side)
 	{
-		if(side == this.world.getBlockState(this.pos).getValue(((BlockFEFExcavator)this.blockType).FACING) || side == this.world.getBlockState(this.pos).getValue(((BlockFEFExcavator)this.blockType).FACING).getOpposite()) return null;
+		if(side == this.world.getBlockState(this.pos).getValue(BlockFEFMachine.FACING) || side == this.world.getBlockState(this.pos).getValue(BlockFEFMachine.FACING).getOpposite()) return null;
 		return SLOTS_ALL;
 	}
 
@@ -117,10 +116,5 @@ public class TileEntityFEFMachineInput extends TileEntityFEFMachine {
 		if((index >= 9 && index < 13) && (index != 9 && index != 10 && index != 12)) return this.isItemValidForSlot(index, itemStackIn);
 		else if(index >= 13 && index < 22) return true;
 		return false;
-	}
-
-	@Override
-	public boolean isActive(){
-		return (this.temperature < 95.f && this.machineItemStacks.get(9).getItem() == Item.getItemFromBlock(Blocks.REDSTONE_TORCH) && !this.isJammed);
 	}
 }

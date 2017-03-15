@@ -1,7 +1,6 @@
 package com.the7thcircle.fineredge.fundamentals.inventory;
 
 import com.the7thcircle.fineredge.fundamentals.items.ItemFEFMachineUpgrade;
-import com.the7thcircle.fineredge.fundamentals.tileentity.TileEntityFEFExcavator;
 
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;

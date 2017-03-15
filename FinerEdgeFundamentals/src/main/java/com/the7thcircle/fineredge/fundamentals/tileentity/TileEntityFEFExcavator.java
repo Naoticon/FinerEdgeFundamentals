@@ -1,7 +1,6 @@
 package com.the7thcircle.fineredge.fundamentals.tileentity;
 
 import com.the7thcircle.fineredge.fundamentals.blocks.BlockFEFExcavationMarker;
-import com.the7thcircle.fineredge.fundamentals.blocks.BlockFEFExcavator;
 import com.the7thcircle.fineredge.fundamentals.blocks.BlockFEFMachine;
 import com.the7thcircle.fineredge.fundamentals.blocks.FEFBlocks;
 import com.the7thcircle.fineredge.fundamentals.items.FEFItems;
@@ -9,7 +8,6 @@ import com.the7thcircle.fineredge.fundamentals.items.FEFItems;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.ItemStackHelper;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -96,11 +94,11 @@ public class TileEntityFEFExcavator extends TileEntityFEFMachine {
 
 			this.currBlockProgress += 0.025f * this.miningSpeed;
 			if(currBlockProgress >= 1.f){
-				if(this.world.getBlockState(currBlock).getBlock() != Blocks.AIR && this.world.getBlockState(currBlock).getBlock() != Blocks.BEDROCK && this.world.getBlockState(currBlock).getBlock() != FEFBlocks.excavator){
+				if(this.world.getBlockState(currBlock).getBlock() != Blocks.AIR && this.world.getBlockState(currBlock).getBlock() != Blocks.BEDROCK && this.world.getBlockState(currBlock).getBlock() != FEFBlocks.EXCAVATOR){
 					//If we don't have a liquid upgrade, don't evacuate liquids
-					if(!(this.world.getBlockState(currBlock).getBlock() instanceof BlockLiquid) || this.machineItemStacks.get(9).getItem().equals(FEFItems.upgradeLiquidPump) || this.machineItemStacks.get(10).getItem().equals(FEFItems.upgradeLiquidPump)){
-						int fortuneLevel = (this.machineItemStacks.get(9).getItem().equals(FEFItems.upgradeFortune) || this.machineItemStacks.get(10).getItem().equals(FEFItems.upgradeFortune)) ? 3 : 0;
-						boolean silkTouch = (this.machineItemStacks.get(9).getItem().equals(FEFItems.upgradeSilkTouch) || this.machineItemStacks.get(10).getItem().equals(FEFItems.upgradeSilkTouch));
+					if(!(this.world.getBlockState(currBlock).getBlock() instanceof BlockLiquid) || this.machineItemStacks.get(9).getItem().equals(FEFItems.UPGRADE_LIQUID_PUMP) || this.machineItemStacks.get(10).getItem().equals(FEFItems.UPGRADE_LIQUID_PUMP)){
+						int fortuneLevel = (this.machineItemStacks.get(9).getItem().equals(FEFItems.UPGRADE_FORTUNE) || this.machineItemStacks.get(10).getItem().equals(FEFItems.UPGRADE_FORTUNE)) ? 3 : 0;
+						boolean silkTouch = (this.machineItemStacks.get(9).getItem().equals(FEFItems.UPGRADE_SILK_TOUCH) || this.machineItemStacks.get(10).getItem().equals(FEFItems.UPGRADE_SILK_TOUCH));
 						this.harvestBlock(currBlock, fortuneLevel, silkTouch, this.machineItemStacks);
 						
 					}
@@ -123,7 +121,7 @@ public class TileEntityFEFExcavator extends TileEntityFEFMachine {
 	
 	private void establishBoundary(){
 		//Boundary checking, step one, start with the marker directly behind the excavator:
-		EnumFacing startDirection = this.world.getBlockState(this.pos).getValue(((BlockFEFMachine)this.blockType).FACING).getOpposite(), currDirection = startDirection.getOpposite();
+		EnumFacing startDirection = this.world.getBlockState(this.pos).getValue(BlockFEFMachine.FACING).getOpposite(), currDirection = startDirection.getOpposite();
 		BlockPos startPos = this.getPos().offset(startDirection, 1), check2, check3, check4, currPos = startPos;
 		BlockPos[] markerPos = new BlockPos[16];
 		int currMarker = 0;

@@ -1,13 +1,10 @@
 package com.the7thcircle.fineredge.fundamentals.inventory;
 
 import com.the7thcircle.fineredge.fundamentals.tileentity.TileEntityFEFExcavator;
+import com.the7thcircle.fineredge.fundamentals.tileentity.TileEntityFEFMachine;
 
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 
 public class SlotFEFExcavatorCoolant extends Slot{
@@ -18,6 +15,6 @@ public class SlotFEFExcavatorCoolant extends Slot{
 
 	@Override
 	public boolean isItemValid(ItemStack stack) {
-        return TileEntityFEFExcavator.isItemCoolant(stack);
+        return TileEntityFEFMachine.isItemCoolant(stack);
     }
 }

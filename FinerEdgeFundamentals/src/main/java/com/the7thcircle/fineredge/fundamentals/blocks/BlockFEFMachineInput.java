@@ -1,6 +1,5 @@
 package com.the7thcircle.fineredge.fundamentals.blocks;
 
-import com.the7thcircle.fineredge.fundamentals.tileentity.TileEntityFEFMachine;
 import com.the7thcircle.fineredge.fundamentals.tileentity.TileEntityFEFMachineInput;
 
 import net.minecraft.block.material.MapColor;

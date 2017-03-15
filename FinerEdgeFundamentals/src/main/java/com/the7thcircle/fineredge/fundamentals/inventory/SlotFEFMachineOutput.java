@@ -1,14 +1,9 @@
 package com.the7thcircle.fineredge.fundamentals.inventory;
 
-import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.FurnaceRecipes;
-import net.minecraft.stats.AchievementList;
-import net.minecraft.util.math.MathHelper;
 
 public class SlotFEFMachineOutput extends Slot {
 
@@ -41,12 +36,14 @@ public class SlotFEFMachineOutput extends Slot {
         return stack;
     }
     
-    protected void onCrafting(ItemStack stack, int amount) {
+    @Override
+	protected void onCrafting(ItemStack stack, int amount) {
         this.removeCount += amount;
         this.onCrafting(stack);
     }
 
-    protected void onCrafting(ItemStack stack) {
+    @Override
+	protected void onCrafting(ItemStack stack) {
         stack.onCrafting(this.player.world, this.player, this.removeCount);
 
         if (!this.player.world.isRemote) {

@@ -61,7 +61,7 @@ public class TileEntityFEFMachine extends TileEntityLockable implements ITickabl
 
 	@Override
 	public ItemStack getStackInSlot(int index) {
-		return (ItemStack)this.machineItemStacks.get(index);
+		return this.machineItemStacks.get(index);
 	}
 
 	@Override
@@ -76,7 +76,7 @@ public class TileEntityFEFMachine extends TileEntityLockable implements ITickabl
 
 	@Override
 	public void setInventorySlotContents(int index, ItemStack stack) {
-		ItemStack itemstack = (ItemStack)this.machineItemStacks.get(index);
+		ItemStack itemstack = this.machineItemStacks.get(index);
 		boolean flag = !stack.isEmpty() && stack.isItemEqual(itemstack) && ItemStack.areItemStackTagsEqual(stack, itemstack);
 		this.machineItemStacks.set(index, stack);
 
@@ -144,7 +144,7 @@ public class TileEntityFEFMachine extends TileEntityLockable implements ITickabl
 
 	@Override
 	public boolean isUsableByPlayer(EntityPlayer player) {
-		return this.world.getTileEntity(this.pos) != this ? false : player.getDistanceSq((double)this.pos.getX() + 0.5D, (double)this.pos.getY() + 0.5D, (double)this.pos.getZ() + 0.5D) <= 64.0D;
+		return this.world.getTileEntity(this.pos) != this ? false : player.getDistanceSq(this.pos.getX() + 0.5D, this.pos.getY() + 0.5D, this.pos.getZ() + 0.5D) <= 64.0D;
 	}
 
 	@Override
@@ -162,7 +162,8 @@ public class TileEntityFEFMachine extends TileEntityLockable implements ITickabl
 		case 1: return (int) this.miningSpeed;
 		case 2: return (int) this.temperature;
 		case 3: return (int) this.progress;
-		case 4: return (int) this.storedEnergy;
+		case 4: return this.storedEnergy;
+		case 5: return this.energyUseRate;
 		}
 		return 0;
 	}
@@ -186,12 +187,15 @@ public class TileEntityFEFMachine extends TileEntityLockable implements ITickabl
 		case 4:
 			this.storedEnergy = value;
 			break;
+		case 5:
+			this.energyUseRate = value;
+			break;
 		}
 	}
 
 	@Override
 	public int getFieldCount() {
-		return 5;
+		return 6;
 	}
 
 	@Override
@@ -220,7 +224,6 @@ public class TileEntityFEFMachine extends TileEntityLockable implements ITickabl
 
 	@Override
 	public String getGuiID() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -233,7 +236,7 @@ public class TileEntityFEFMachine extends TileEntityLockable implements ITickabl
 	@Override
 	public int[] getSlotsForFace(EnumFacing side)
 	{
-		if(side == this.world.getBlockState(this.pos).getValue(((BlockFEFExcavator)this.blockType).FACING) || side == this.world.getBlockState(this.pos).getValue(((BlockFEFExcavator)this.blockType).FACING).getOpposite()) return null;
+		if(side == this.world.getBlockState(this.pos).getValue(BlockFEFMachine.FACING) || side == this.world.getBlockState(this.pos).getValue(BlockFEFMachine.FACING).getOpposite()) return null;
 		return SLOTS_ALL;
 	}
 
@@ -252,6 +255,7 @@ public class TileEntityFEFMachine extends TileEntityLockable implements ITickabl
 	}
 
 	public boolean isActive(){
+		if(this.storedEnergy == 0 || this.energyUseRate == 0) return false;
 		return (this.temperature < 95.f && this.storedEnergy >= this.energyUseRate && !this.isJammed);
 	}
 	
@@ -291,11 +295,12 @@ public class TileEntityFEFMachine extends TileEntityLockable implements ITickabl
 	protected boolean checkUpgradesUpdateProperties(NonNullList<ItemStack> machineStacks){
 		boolean shouldUpdate = false;
 		if(!this.world.isRemote){
-			boolean wasActive = this.isActive();
-			int numSpeedUpgrades = (machineStacks.get(9).getItem().equals(FEFItems.upgradeSpeed) ? machineStacks.get(9).getCount() : 0) + (machineStacks.get(10).getItem().equals(FEFItems.upgradeSpeed) ? machineStacks.get(10).getCount() : 0);
-			int numSpeedDownUpgrades = (machineStacks.get(9).getItem().equals(FEFItems.upgradeSpeedDown) ? machineStacks.get(9).getCount() : 0) + (machineStacks.get(10).getItem().equals(FEFItems.upgradeSpeedDown) ? machineStacks.get(10).getCount() : 0);
+			boolean wasActive = this.world.getBlockState(this.pos).getValue(BlockFEFMachine.ACTIVE);
+			int numSpeedUpgrades = (machineStacks.get(9).getItem().equals(FEFItems.UPGRADE_SPEED) ? machineStacks.get(9).getCount() : 0) + (machineStacks.get(10).getItem().equals(FEFItems.UPGRADE_SPEED) ? machineStacks.get(10).getCount() : 0);
+			int numSpeedDownUpgrades = (machineStacks.get(9).getItem().equals(FEFItems.UPGRADE_SPEED_DOWN) ? machineStacks.get(9).getCount() : 0) + (machineStacks.get(10).getItem().equals(FEFItems.UPGRADE_SPEED_DOWN) ? machineStacks.get(10).getCount() : 0);
 			this.miningSpeed = (float) ((1.f + (1.f * numSpeedUpgrades)) * (Math.pow(0.9f, numSpeedDownUpgrades)));
 			this.energyUseRate = (int) (20.f * (numSpeedUpgrades + 1) * (Math.pow(0.95f, numSpeedDownUpgrades)));
+			if(this.storedEnergy < this.energyUseRate) this.energyUseRate = 0;
 
 			if (this.isActive()){
 				if (this.storedEnergy >= this.energyUseRate) this.storedEnergy -= this.energyUseRate;
@@ -307,7 +312,7 @@ public class TileEntityFEFMachine extends TileEntityLockable implements ITickabl
 			}
 			else if(this.temperature > 0.f) this.temperature -= 0.05f;
 			
-			ItemStack itemstack = (ItemStack)this.machineItemStacks.get(11);
+			ItemStack itemstack = machineStacks.get(11);
 			if(this.isActive() && this.remainingCoolTime == 0 && !itemstack.isEmpty()){
 
 				this.remainingCoolTime = getItemCoolTime(itemstack);
@@ -319,7 +324,7 @@ public class TileEntityFEFMachine extends TileEntityLockable implements ITickabl
 				if (itemstack.isEmpty())
 				{
 					ItemStack item1 = item.getContainerItem(itemstack);
-					this.machineItemStacks.set(11, item1);
+					machineStacks.set(11, item1);
 				}
 			}
 
@@ -327,7 +332,7 @@ public class TileEntityFEFMachine extends TileEntityLockable implements ITickabl
 			if (wasActive != this.isActive())
 			{
 				shouldUpdate = true;
-				BlockFEFMachine.setState(this.isActive(), this.world, this.pos);
+				BlockFEFMachine.setMachineActive(this.isActive(), this.world, this.pos);
 			}
 		}
 		return shouldUpdate;
@@ -340,7 +345,7 @@ public class TileEntityFEFMachine extends TileEntityLockable implements ITickabl
 	protected void harvestBlock(BlockPos blockPos, int fortuneLevel, boolean silkTouch, NonNullList<ItemStack> machineStacks){
 
 		if(silkTouch){
-			ItemStack blockItemStack = this.getSilkDrop(this.world, blockPos);
+			ItemStack blockItemStack = TileEntityFEFMachine.getSilkDrop(this.world, blockPos);
 			for(int i = 0; i < 9; ++i){
 				if(blockItemStack.getCount() > 0){
 					if(machineStacks.get(i).isEmpty()){
@@ -400,7 +405,7 @@ public class TileEntityFEFMachine extends TileEntityLockable implements ITickabl
 			}
 		}
 
-		if(machineStacks.get(9).getItem().equals(FEFItems.upgradeStoneFill) || machineStacks.get(10).getItem().equals(FEFItems.upgradeStoneFill)){
+		if(machineStacks.get(9).getItem().equals(FEFItems.UPGRADE_STONE_FILL) || machineStacks.get(10).getItem().equals(FEFItems.UPGRADE_STONE_FILL)){
 			this.world.setBlockState(blockPos, Blocks.STONE.getDefaultState(), world.isRemote ? 11 : 3);
 		}
 		else{
@@ -411,7 +416,6 @@ public class TileEntityFEFMachine extends TileEntityLockable implements ITickabl
 	net.minecraftforge.items.IItemHandler handlerTop = new net.minecraftforge.items.wrapper.SidedInvWrapper(this, net.minecraft.util.EnumFacing.UP);
 	net.minecraftforge.items.IItemHandler handlerBottom = new net.minecraftforge.items.wrapper.SidedInvWrapper(this, net.minecraft.util.EnumFacing.DOWN);
 	net.minecraftforge.items.IItemHandler handlerSide = new net.minecraftforge.items.wrapper.SidedInvWrapper(this, net.minecraft.util.EnumFacing.WEST);
-	//net.minecraftforge.energy.IEnergyStorage handlerEnergy = new net.minecraftforge.energy.EnergyStorage(50000, 50000, 0);
 	
 	@Override
 	public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @javax.annotation.Nullable net.minecraft.util.EnumFacing facing)
@@ -505,6 +509,10 @@ public class TileEntityFEFMachine extends TileEntityLockable implements ITickabl
 			return ItemStack.EMPTY;
 		}
 		return silk_drops;
+	}
+	
+	public int getEnergyUseRate(){
+		return this.energyUseRate;
 	}
 
 	@Override

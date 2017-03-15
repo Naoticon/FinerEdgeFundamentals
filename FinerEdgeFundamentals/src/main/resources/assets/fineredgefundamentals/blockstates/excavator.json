@@ -1,9 +1,14 @@
 {
 	"variants": {
-		"normal": { "model": "fineredgefundamentals:excavator"},
-        "facing=north": { "model": "fineredgefundamentals:excavator" },
-        "facing=south": { "model": "fineredgefundamentals:excavator", "y": 180 },
-        "facing=west":  { "model": "fineredgefundamentals:excavator", "y": 270 },
-        "facing=east":  { "model": "fineredgefundamentals:excavator", "y": 90 }
+		"active=false,normal": { "model": "fineredgefundamentals:excavator"},
+        "active=false,facing=north": { "model": "fineredgefundamentals:excavator" },
+        "active=false,facing=south": { "model": "fineredgefundamentals:excavator", "y": 180 },
+        "active=false,facing=west":  { "model": "fineredgefundamentals:excavator", "y": 270 },
+        "active=false,facing=east":  { "model": "fineredgefundamentals:excavator", "y": 90 },
+		"active=true,normal": { "model": "fineredgefundamentals:excavator_on"},
+        "active=true,facing=north": { "model": "fineredgefundamentals:excavator_on" },
+        "active=true,facing=south": { "model": "fineredgefundamentals:excavator_on", "y": 180 },
+        "active=true,facing=west":  { "model": "fineredgefundamentals:excavator_on", "y": 270 },
+        "active=true,facing=east":  { "model": "fineredgefundamentals:excavator_on", "y": 90 }
     }
 }

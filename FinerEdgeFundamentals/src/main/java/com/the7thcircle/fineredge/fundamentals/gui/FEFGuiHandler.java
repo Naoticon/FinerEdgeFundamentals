@@ -7,7 +7,6 @@ import com.the7thcircle.fineredge.fundamentals.inventory.ContainerFEFMachineInpu
 import com.the7thcircle.fineredge.fundamentals.tileentity.TileEntityFEFExcavator;
 import com.the7thcircle.fineredge.fundamentals.tileentity.TileEntityFEFGardener;
 import com.the7thcircle.fineredge.fundamentals.tileentity.TileEntityFEFLogger;
-import com.the7thcircle.fineredge.fundamentals.tileentity.TileEntityFEFMachine;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;

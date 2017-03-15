@@ -2,7 +2,6 @@ package com.the7thcircle.fineredge.fundamentals.tileentity;
 
 import java.util.List;
 
-import com.the7thcircle.fineredge.fundamentals.blocks.BlockFEFGardener;
 import com.the7thcircle.fineredge.fundamentals.blocks.BlockFEFMachine;
 import com.the7thcircle.fineredge.fundamentals.items.FEFItems;
 
@@ -14,11 +13,10 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemDye;
-import net.minecraft.item.ItemSeedFood;
-import net.minecraft.item.ItemSeeds;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.common.IPlantable;
 
 public class TileEntityFEFGardener extends TileEntityFEFMachineInput {
 
@@ -63,14 +61,14 @@ public class TileEntityFEFGardener extends TileEntityFEFMachineInput {
 
 		//Check current upgrades and update properties accordingly
 		if(!this.world.isRemote){
-			int numRangeUpgrades = (this.machineItemStacks.get(9).getItem().equals(FEFItems.upgradeRange) ? this.machineItemStacks.get(9).getCount() : 0) + (this.machineItemStacks.get(10).getItem().equals(FEFItems.upgradeRange) ? this.machineItemStacks.get(10).getCount() : 0);
-			int numRangeDownUpgrades = (this.machineItemStacks.get(9).getItem().equals(FEFItems.upgradeRangeDown) ? this.machineItemStacks.get(9).getCount() : 0) + (this.machineItemStacks.get(10).getItem().equals(FEFItems.upgradeRangeDown) ? this.machineItemStacks.get(10).getCount() : 0);
+			int numRangeUpgrades = (this.machineItemStacks.get(9).getItem().equals(FEFItems.UPGRADE_RANGE) ? this.machineItemStacks.get(9).getCount() : 0) + (this.machineItemStacks.get(10).getItem().equals(FEFItems.UPGRADE_RANGE) ? this.machineItemStacks.get(10).getCount() : 0);
+			int numRangeDownUpgrades = (this.machineItemStacks.get(9).getItem().equals(FEFItems.UPGRADE_RANGE_DOWN) ? this.machineItemStacks.get(9).getCount() : 0) + (this.machineItemStacks.get(10).getItem().equals(FEFItems.UPGRADE_RANGE_DOWN) ? this.machineItemStacks.get(10).getCount() : 0);
 			int oldBoundarySize = boundarySize;
 			this.boundarySize = 5 + 2 * numRangeUpgrades - 2 * numRangeDownUpgrades;
 			if(oldBoundarySize != boundarySize || currBlock.equals(BlockPos.ORIGIN)){
 				this.firstBlock = new BlockPos(this.pos.getX(), this.pos.getY(), this.pos.getZ());
-				this.firstBlock = this.firstBlock.offset(this.world.getBlockState(this.pos).getValue(((BlockFEFMachine)this.blockType).FACING).getOpposite(), 1);
-				this.firstBlock = this.firstBlock.offset(this.world.getBlockState(this.pos).getValue(((BlockFEFMachine)this.blockType).FACING).rotateYCCW(), boundarySize / 2);
+				this.firstBlock = this.firstBlock.offset(this.world.getBlockState(this.pos).getValue(BlockFEFMachine.FACING).getOpposite(), 1);
+				this.firstBlock = this.firstBlock.offset(this.world.getBlockState(this.pos).getValue(BlockFEFMachine.FACING).rotateYCCW(), boundarySize / 2);
 				this.currBlock = this.firstBlock;
 				this.currBlockNum = 0;
 			}
@@ -78,18 +76,26 @@ public class TileEntityFEFGardener extends TileEntityFEFMachineInput {
 
 		//Gardener Calculations
 		if(this.isActive() && !this.world.isRemote){
-			if(this.isGrowablePlant(this.world.getBlockState(currBlock).getBlock())){
+			if(TileEntityFEFGardener.isGrowablePlant(this.world.getBlockState(currBlock).getBlock())){
 				this.currBlockProgress += 0.1f * this.miningSpeed;
 				if(this.currBlockProgress >= 1.f){
-					int fortuneLevel = (this.machineItemStacks.get(9).getItem().equals(FEFItems.upgradeFortune) || this.machineItemStacks.get(10).getItem().equals(FEFItems.upgradeFortune)) ? 3 : 0;
+					int fortuneLevel = (this.machineItemStacks.get(9).getItem().equals(FEFItems.UPGRADE_FORTUNE) || this.machineItemStacks.get(10).getItem().equals(FEFItems.UPGRADE_FORTUNE)) ? 3 : 0;
 
 					if(this.world.getBlockState(currBlock).getBlock() instanceof BlockCrops){
 						BlockCrops currPlant = (BlockCrops) this.world.getBlockState(currBlock).getBlock();
 
 						if(currPlant.isMaxAge(this.world.getBlockState(currBlock))){
 							//Harvest Plant
-							List<ItemStack> plantDrops = currPlant.getDrops(this.world, currBlock, this.world.getBlockState(currBlock), fortuneLevel);
+							List<ItemStack> plantDrops = currPlant.getDrops(this.world, this.currBlock, this.world.getBlockState(currBlock), fortuneLevel);
+							//Remove a seed since we don't fully harvest the plant to prevent duplication
+							boolean hasRemovedSeed = false;
 							for(int i = 0; i < plantDrops.size(); ++i){
+								if(plantDrops.get(i).getItem().equals(currPlant.getItem(this.world, this.currBlock, this.world.getBlockState(currBlock)).getItem())){
+									if(!hasRemovedSeed){
+										plantDrops.get(i).shrink(1);
+										hasRemovedSeed = true;
+									}
+								}
 								ItemStack currItemStack = plantDrops.get(i);
 								for(int i2 = 0; i2 < 9; ++i2){
 									if(currItemStack.getCount() > 0){
@@ -135,11 +141,11 @@ public class TileEntityFEFGardener extends TileEntityFEFMachineInput {
 							this.currBlock = this.firstBlock;
 						}
 						else if((currBlockNum) % boundarySize == 0){
-							this.currBlock = this.currBlock.offset(this.world.getBlockState(this.pos).getValue(((BlockFEFMachine)this.blockType).FACING), this.boundarySize - 1);
-							this.currBlock = this.currBlock.offset(this.world.getBlockState(this.pos).getValue(((BlockFEFMachine)this.blockType).FACING).rotateY(), 1);				
+							this.currBlock = this.currBlock.offset(this.world.getBlockState(this.pos).getValue(BlockFEFMachine.FACING), this.boundarySize - 1);
+							this.currBlock = this.currBlock.offset(this.world.getBlockState(this.pos).getValue(BlockFEFMachine.FACING).rotateY(), 1);				
 						}
 						else{
-							this.currBlock = this.currBlock.offset(this.world.getBlockState(this.pos).getValue(((BlockFEFMachine)this.blockType).FACING).getOpposite(), 1);
+							this.currBlock = this.currBlock.offset(this.world.getBlockState(this.pos).getValue(BlockFEFMachine.FACING).getOpposite(), 1);
 						}
 						if(this.currBlockNum >= this.boundarySize * this.boundarySize) this.currBlockNum = 0;
 					}
@@ -149,8 +155,8 @@ public class TileEntityFEFGardener extends TileEntityFEFMachineInput {
 			
 			else if(this.world.getBlockState(currBlock).getBlock().equals(Blocks.AIR) && this.world.getBlockState(currBlock.down()).getBlock().equals(Blocks.FARMLAND)){
 				for(int i = 0; i < 9; ++i){
-					if(isGrowablePlant(Block.getBlockFromItem(this.machineItemStacks.get(i + 13).getItem())) && currBlock.getY() == this.pos.getY()){
-						this.world.setBlockState(currBlock, Block.getBlockFromItem(this.machineItemStacks.get(i + 13).getItem()).getStateFromMeta(this.machineItemStacks.get(i + 13).getItem().getMetadata(this.machineItemStacks.get(i + 13).getItemDamage())), world.isRemote ? 11 : 3);
+					if(isGrowablePlant(this.machineItemStacks.get(i + 13).getItem()) && currBlock.getY() == this.pos.getY()){
+						this.world.setBlockState(this.currBlock, ((IPlantable) this.machineItemStacks.get(i + 13).getItem()).getPlant(this.world, this.currBlock), world.isRemote ? 11 : 3);
 						this.machineItemStacks.get(i + 13).shrink(1);
 						break;
 					}
@@ -160,11 +166,11 @@ public class TileEntityFEFGardener extends TileEntityFEFMachineInput {
 					this.currBlock = this.firstBlock;
 				}
 				else if((currBlockNum) % boundarySize == 0){
-					this.currBlock = this.currBlock.offset(this.world.getBlockState(this.pos).getValue(((BlockFEFMachine)this.blockType).FACING), this.boundarySize - 1);
-					this.currBlock = this.currBlock.offset(this.world.getBlockState(this.pos).getValue(((BlockFEFMachine)this.blockType).FACING).rotateY(), 1);				
+					this.currBlock = this.currBlock.offset(this.world.getBlockState(this.pos).getValue(BlockFEFMachine.FACING), this.boundarySize - 1);
+					this.currBlock = this.currBlock.offset(this.world.getBlockState(this.pos).getValue(BlockFEFMachine.FACING).rotateY(), 1);				
 				}
 				else{
-					this.currBlock = this.currBlock.offset(this.world.getBlockState(this.pos).getValue(((BlockFEFMachine)this.blockType).FACING).getOpposite(), 1);
+					this.currBlock = this.currBlock.offset(this.world.getBlockState(this.pos).getValue(BlockFEFMachine.FACING).getOpposite(), 1);
 				}
 				if(this.currBlockNum >= this.boundarySize * this.boundarySize) this.currBlockNum = 0;
 			}
@@ -175,11 +181,11 @@ public class TileEntityFEFGardener extends TileEntityFEFMachineInput {
 					this.currBlock = this.firstBlock;
 				}
 				else if((currBlockNum) % boundarySize == 0){
-					this.currBlock = this.currBlock.offset(this.world.getBlockState(this.pos).getValue(((BlockFEFMachine)this.blockType).FACING), this.boundarySize - 1);
-					this.currBlock = this.currBlock.offset(this.world.getBlockState(this.pos).getValue(((BlockFEFMachine)this.blockType).FACING).rotateY(), 1);				
+					this.currBlock = this.currBlock.offset(this.world.getBlockState(this.pos).getValue(BlockFEFMachine.FACING), this.boundarySize - 1);
+					this.currBlock = this.currBlock.offset(this.world.getBlockState(this.pos).getValue(BlockFEFMachine.FACING).rotateY(), 1);				
 				}
 				else{
-					this.currBlock = this.currBlock.offset(this.world.getBlockState(this.pos).getValue(((BlockFEFMachine)this.blockType).FACING).getOpposite(), 1);
+					this.currBlock = this.currBlock.offset(this.world.getBlockState(this.pos).getValue(BlockFEFMachine.FACING).getOpposite(), 1);
 				}
 				if(this.currBlockNum >= this.boundarySize * this.boundarySize) this.currBlockNum = 0;
 			}
@@ -193,7 +199,12 @@ public class TileEntityFEFGardener extends TileEntityFEFMachineInput {
 	}
 
 	public static boolean isGrowablePlant(Block inBlock){
-		if(inBlock instanceof IGrowable || ItemBlock.getItemFromBlock(inBlock) instanceof ItemSeedFood || ItemBlock.getItemFromBlock(inBlock) instanceof ItemSeeds) return true;
+		if(inBlock instanceof IGrowable || Item.getItemFromBlock(inBlock) instanceof IPlantable) return true;
+		return false;
+	}
+
+	public static boolean isGrowablePlant(Item inItem){
+		if(inItem instanceof IPlantable) return true;
 		return false;
 	}
 }

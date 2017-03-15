@@ -1,9 +1,5 @@
 package com.the7thcircle.fineredge.fundamentals;
 
-import com.the7thcircle.fineredge.fundamentals.blocks.FEFBlocks;
-import com.the7thcircle.fineredge.fundamentals.items.FEFItems;
-
-import net.minecraft.init.Blocks;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;

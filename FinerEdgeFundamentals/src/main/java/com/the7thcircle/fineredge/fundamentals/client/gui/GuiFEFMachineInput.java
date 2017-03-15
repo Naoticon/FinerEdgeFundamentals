@@ -1,7 +1,6 @@
 package com.the7thcircle.fineredge.fundamentals.client.gui;
 
 
-import com.the7thcircle.fineredge.fundamentals.inventory.ContainerFEFMachine;
 import com.the7thcircle.fineredge.fundamentals.inventory.ContainerFEFMachineInput;
 
 import net.minecraft.client.renderer.GlStateManager;

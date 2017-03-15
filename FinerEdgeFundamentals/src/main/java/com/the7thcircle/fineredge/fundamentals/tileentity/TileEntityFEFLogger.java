@@ -1,22 +1,14 @@
 package com.the7thcircle.fineredge.fundamentals.tileentity;
 
-import com.the7thcircle.fineredge.fundamentals.blocks.BlockFEFLogger;
 import com.the7thcircle.fineredge.fundamentals.blocks.BlockFEFMachine;
-import com.the7thcircle.fineredge.fundamentals.inventory.ContainerFEFMachineInput;
 import com.the7thcircle.fineredge.fundamentals.items.FEFItems;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLeaves;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Blocks;
-import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.oredict.OreDictionary;
 
@@ -77,14 +69,14 @@ public class TileEntityFEFLogger extends TileEntityFEFMachineInput {
 		//Check current upgrades and update properties accordingly
 		boolean shouldUpdate = this.checkUpgradesUpdateProperties(this.machineItemStacks);
 		if(!this.world.isRemote){
-			int numRangeUpgrades = (this.machineItemStacks.get(9).getItem().equals(FEFItems.upgradeRange) ? this.machineItemStacks.get(9).getCount() : 0) + (this.machineItemStacks.get(10).getItem().equals(FEFItems.upgradeRange) ? this.machineItemStacks.get(10).getCount() : 0);
-			int numRangeDownUpgrades = (this.machineItemStacks.get(9).getItem().equals(FEFItems.upgradeRangeDown) ? this.machineItemStacks.get(9).getCount() : 0) + (this.machineItemStacks.get(10).getItem().equals(FEFItems.upgradeRangeDown) ? this.machineItemStacks.get(10).getCount() : 0);
+			int numRangeUpgrades = (this.machineItemStacks.get(9).getItem().equals(FEFItems.UPGRADE_RANGE) ? this.machineItemStacks.get(9).getCount() : 0) + (this.machineItemStacks.get(10).getItem().equals(FEFItems.UPGRADE_RANGE) ? this.machineItemStacks.get(10).getCount() : 0);
+			int numRangeDownUpgrades = (this.machineItemStacks.get(9).getItem().equals(FEFItems.UPGRADE_RANGE_DOWN) ? this.machineItemStacks.get(9).getCount() : 0) + (this.machineItemStacks.get(10).getItem().equals(FEFItems.UPGRADE_RANGE_DOWN) ? this.machineItemStacks.get(10).getCount() : 0);
 			int oldBoundarySize = boundarySize;
 			this.boundarySize = 5 + 2 * numRangeUpgrades - 2 * numRangeDownUpgrades;
 			if(oldBoundarySize != boundarySize || currBlock.equals(BlockPos.ORIGIN)){
 				this.firstBlock = new BlockPos(this.pos.getX(), this.pos.getY(), this.pos.getZ());
-				this.firstBlock = this.firstBlock.offset(this.world.getBlockState(this.pos).getValue(((BlockFEFMachine)this.blockType).FACING).getOpposite(), 1);
-				this.firstBlock = this.firstBlock.offset(this.world.getBlockState(this.pos).getValue(((BlockFEFMachine)this.blockType).FACING).rotateYCCW(), boundarySize / 2);
+				this.firstBlock = this.firstBlock.offset(this.world.getBlockState(this.pos).getValue(BlockFEFMachine.FACING).getOpposite(), 1);
+				this.firstBlock = this.firstBlock.offset(this.world.getBlockState(this.pos).getValue(BlockFEFMachine.FACING).rotateYCCW(), boundarySize / 2);
 				this.currBlock = this.firstBlock;
 				this.currBlockNum = 0;
 			}
@@ -98,11 +90,11 @@ public class TileEntityFEFLogger extends TileEntityFEFMachineInput {
 				if(currBlockProgress >= 1.f){
 					//If we are currently harvesting a "branch" (x/z layer) continue in an outward spiral
 					if(this.hasBranch){
-						int fortuneLevel = (this.machineItemStacks.get(9).getItem().equals(FEFItems.upgradeFortune) || this.machineItemStacks.get(10).getItem().equals(FEFItems.upgradeFortune)) ? 3 : 0;
-						boolean silkTouch = (this.machineItemStacks.get(9).getItem().equals(FEFItems.upgradeSilkTouch) || this.machineItemStacks.get(10).getItem().equals(FEFItems.upgradeSilkTouch));
+						int fortuneLevel = (this.machineItemStacks.get(9).getItem().equals(FEFItems.UPGRADE_FORTUNE) || this.machineItemStacks.get(10).getItem().equals(FEFItems.UPGRADE_FORTUNE)) ? 3 : 0;
+						boolean silkTouch = (this.machineItemStacks.get(9).getItem().equals(FEFItems.UPGRADE_SILK_TOUCH) || this.machineItemStacks.get(10).getItem().equals(FEFItems.UPGRADE_SILK_TOUCH));
 						//If we're currently at the center block and it's wood/leaves, harvest it and begin moving outward.  Otherwise, assume top of tree and stop.
 						if(this.currBranchRange == 0){
-							if(this.isWoodOrLeaves(this.world.getBlockState(this.currBlock).getBlock())){
+							if(TileEntityFEFLogger.isWoodOrLeaves(this.world.getBlockState(this.currBlock).getBlock())){
 								this.harvestBlock(currBlock, fortuneLevel, silkTouch, this.machineItemStacks);
 								++this.currBranchRange;
 							}
@@ -126,7 +118,7 @@ public class TileEntityFEFLogger extends TileEntityFEFMachineInput {
 							}
 							//If we've found wood/leaves at current branch point and aren't at the end, harvest the block.
 							if(this.currBranchNum < 8 * this.currBranchRange){
-								if(this.isWoodOrLeaves(this.world.getBlockState(this.currBlock).getBlock())) this.harvestBlock(currBlock, fortuneLevel, silkTouch, this.machineItemStacks);
+								if(TileEntityFEFLogger.isWoodOrLeaves(this.world.getBlockState(this.currBlock).getBlock())) this.harvestBlock(currBlock, fortuneLevel, silkTouch, this.machineItemStacks);
 								++this.currBranchNum;
 							}
 						}
@@ -179,11 +171,11 @@ public class TileEntityFEFLogger extends TileEntityFEFMachineInput {
 						this.currBlock = this.firstBlock;
 					}
 					else if((currBlockNum) % boundarySize == 0){
-						this.currBlock = this.currBlock.offset(this.world.getBlockState(this.pos).getValue(((BlockFEFMachine)this.blockType).FACING), this.boundarySize - 1);
-						this.currBlock = this.currBlock.offset(this.world.getBlockState(this.pos).getValue(((BlockFEFMachine)this.blockType).FACING).rotateY(), 1);				
+						this.currBlock = this.currBlock.offset(this.world.getBlockState(this.pos).getValue(BlockFEFMachine.FACING), this.boundarySize - 1);
+						this.currBlock = this.currBlock.offset(this.world.getBlockState(this.pos).getValue(BlockFEFMachine.FACING).rotateY(), 1);				
 					}
 					else{
-						this.currBlock = this.currBlock.offset(this.world.getBlockState(this.pos).getValue(((BlockFEFMachine)this.blockType).FACING).getOpposite(), 1);
+						this.currBlock = this.currBlock.offset(this.world.getBlockState(this.pos).getValue(BlockFEFMachine.FACING).getOpposite(), 1);
 					}
 
 					if(this.currBlockNum >= this.boundarySize * this.boundarySize) this.currBlockNum = 0;

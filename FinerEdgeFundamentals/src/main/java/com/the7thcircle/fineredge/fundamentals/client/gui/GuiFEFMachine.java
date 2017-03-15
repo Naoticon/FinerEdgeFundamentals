@@ -2,33 +2,24 @@ package com.the7thcircle.fineredge.fundamentals.client.gui;
 
 import java.util.List;
 
-import org.lwjgl.util.glu.Project;
-
 import com.google.common.collect.Lists;
 import com.the7thcircle.fineredge.fundamentals.inventory.ContainerFEFMachine;
 import com.the7thcircle.fineredge.fundamentals.tileentity.TileEntityFEFMachine;
 
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
-import net.minecraft.inventory.ContainerEnchantment;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.util.EnchantmentNameParts;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextFormatting;
 
 public class GuiFEFMachine extends GuiContainer{
  
 	private static final ResourceLocation MACHINE_GUI_TEXTURE = new ResourceLocation("fineredgefundamentals", "textures/gui/container/machine.png");
 	private final ContainerFEFMachine container;
-    protected int progress, temperature, energy;
+    protected int progress, temperature, energy, energyUseRate;
 	
 	protected InventoryPlayer playerInventory;
 	protected IInventory tileMachine;
@@ -76,6 +67,7 @@ public class GuiFEFMachine extends GuiContainer{
 		this.temperature = this.tileMachine.getField(2);
 		this.progress = this.tileMachine.getField(3);
 		this.energy = ((TileEntityFEFMachine) this.tileMachine).getEnergyStored();
+		this.energyUseRate = ((TileEntityFEFMachine) this.tileMachine).getEnergyUseRate();
 		
 		if (this.isPointInRegion(137, 17, 10, 38, mouseX, mouseY)) {
             List<String> list = Lists.<String>newArrayList();
@@ -101,7 +93,7 @@ public class GuiFEFMachine extends GuiContainer{
 		else if(this.isPointInRegion(29, 17, 10, 38, mouseX, mouseY)){
 			List<String> list = Lists.<String>newArrayList();
             list.add("" + TextFormatting.YELLOW + TextFormatting.BOLD + this.energy + "RF");
-            list.add("" + TextFormatting.GRAY + I18n.format("container.machine.energy_consumption") + " " + "XX" + "RF/t");
+            list.add("" + TextFormatting.GRAY + I18n.format("container.machine.energy_consumption") + " " + this.energyUseRate + "RF/t");
 
             this.drawHoveringText(list, mouseX, mouseY);
 		}
@@ -110,16 +102,16 @@ public class GuiFEFMachine extends GuiContainer{
     protected int getTemperatureScaled(int pixels)
     {
         int i = this.tileMachine.getField(2);
-        return (int) ((float)pixels * (((float)i) / 94.f));
+        return (int) (pixels * ((i) / 94.f));
     }
     
     protected int getProgressScaled(int pixels){
         int i = this.tileMachine.getField(3);
-        return (int) ((float)pixels * (((float)i) / 99.f));
+        return (int) (pixels * ((i) / 99.f));
     }
     
     protected int getEnergyScaled(int pixels){
     	int i = ((TileEntityFEFMachine) this.tileMachine).getEnergyStored();
-    	return (int) ((float)pixels * (((float)i) / ((TileEntityFEFMachine) this.tileMachine).getMaxEnergyStored()));
+    	return (int) (pixels * (((float)i) / ((TileEntityFEFMachine) this.tileMachine).getMaxEnergyStored()));
     }
 }

@@ -15,7 +15,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class ContainerFEFMachine extends Container {
 
 	protected final IInventory tileMachine;
-	protected int remainingCoolTime, currentItemCoolTime, storedEnergy;
+	protected int remainingCoolTime, currentItemCoolTime, storedEnergy, energyUseRate;
     protected float temperature, progress, miningSpeed;
 	
 
@@ -59,7 +59,7 @@ public class ContainerFEFMachine extends Container {
 	@Override
 	public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
         ItemStack itemstack = ItemStack.EMPTY;
-        Slot slot = (Slot)this.inventorySlots.get(index);
+        Slot slot = this.inventorySlots.get(index);
 
         if (slot != null && slot.getHasStack()) {
             ItemStack itemstack1 = slot.getStack();
@@ -75,7 +75,7 @@ public class ContainerFEFMachine extends Container {
             else if (index >= 13) {
                 //This is a shift-click from player inventory
             	if(TileEntityFEFMachine.isItemCoolant(itemstack)) {
-            		Slot slot1 = (Slot)this.inventorySlots.get(11);
+            		Slot slot1 = this.inventorySlots.get(11);
             		if(!slot1.getHasStack() || slot1.isItemValid(itemstack)){
             		}
             	}
@@ -101,11 +101,12 @@ public class ContainerFEFMachine extends Container {
         return itemstack;
     }
 	
+	@Override
 	public void detectAndSendChanges() {
         super.detectAndSendChanges();
 
         for (int i = 0; i < this.listeners.size(); ++i) {
-            IContainerListener icontainerlistener = (IContainerListener)this.listeners.get(i);
+            IContainerListener icontainerlistener = this.listeners.get(i);
 
             if (this.remainingCoolTime != this.tileMachine.getField(0)) {
                 icontainerlistener.sendProgressBarUpdate(this, 0, this.tileMachine.getField(0));
@@ -119,8 +120,12 @@ public class ContainerFEFMachine extends Container {
                 icontainerlistener.sendProgressBarUpdate(this, 3, this.tileMachine.getField(3));
             }
             
-            if (this.storedEnergy != ((TileEntityFEFMachine) this.tileMachine).getEnergyStored()){
-            	icontainerlistener.sendProgressBarUpdate(this, 4, ((TileEntityFEFMachine) this.tileMachine).getEnergyStored());
+            if (this.storedEnergy != this.tileMachine.getField(4)){
+            	icontainerlistener.sendProgressBarUpdate(this, 4, this.tileMachine.getField(4));
+            }
+            
+            if (this.energyUseRate != this.tileMachine.getField(5)){
+            	icontainerlistener.sendProgressBarUpdate(this, 5, this.tileMachine.getField(5));
             }
         }
 
@@ -128,7 +133,8 @@ public class ContainerFEFMachine extends Container {
         this.currentItemCoolTime = this.tileMachine.getField(1);
         this.temperature = this.tileMachine.getField(2);
         this.progress = this.tileMachine.getField(3);
-        this.storedEnergy = ((TileEntityFEFMachine) this.tileMachine).getEnergyStored();
+        this.storedEnergy = this.tileMachine.getField(4);
+        this.energyUseRate = this.tileMachine.getField(5);
     }
 
     @SideOnly(Side.CLIENT)

@@ -1,0 +1,11 @@
+{
+    "parent": "fineredgefundamentals:block/directional",
+    "textures": {
+        "top": "fineredgefundamentals:blocks/machine_side",
+		"front": "fineredgefundamentals:blocks/gardener_front_on",
+        "back": "fineredgefundamentals:blocks/machine_back",
+        "bottom": "fineredgefundamentals:blocks/machine_side",
+        "left": "fineredgefundamentals:blocks/machine_side",
+        "right": "fineredgefundamentals:blocks/machine_side"
+    }
+}
