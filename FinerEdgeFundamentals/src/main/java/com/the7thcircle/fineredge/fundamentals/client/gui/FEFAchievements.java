@@ -13,7 +13,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 
 @Mod.EventBusSubscriber
-public class GFEFAchievements {	
+public class FEFAchievements {	
 	public static final Achievement ENDERBENDER = new Achievement("achievement.ender_bender", "ender_bender", 0, 0, FEFItems.ACTIVATED_ENDER_EYE, AchievementList.THE_END);
 
 	public static final AchievementPage FEFACHIEVEMENTS = new AchievementPage("Finer Edge Fundamentals", ENDERBENDER);
