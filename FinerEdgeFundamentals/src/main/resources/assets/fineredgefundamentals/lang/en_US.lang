@@ -24,3 +24,6 @@ container.machine.energy_consumption=Consuming
 container.excavator=Excavator
 container.logger=Logger
 container.gardener=Gardener
+
+achievement.ender_bender=Ender Bender
+achievement.ender_bender.desc=Unlock an Eye of Ender
